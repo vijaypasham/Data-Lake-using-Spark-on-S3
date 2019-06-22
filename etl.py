@@ -14,20 +14,30 @@ config.read('dl.cfg')
 os.environ['AWS_ACCESS_KEY_ID']=config['AWS']['AWS_ACCESS_KEY_ID']
 os.environ['AWS_SECRET_ACCESS_KEY']=config['AWS']['AWS_SECRET_ACCESS_KEY']
 
+def create_spark_session():
 """
 Function to Create or return existing SparkSession
 """
-def create_spark_session():
     spark = SparkSession \
         .builder \
         .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:2.7.0") \
         .getOrCreate()
     return spark
 
-"""
-Function to extract data from songs data from input_data and creates the song and artist files in parquet format in the output_data folder
-"""
+
 def process_song_data(spark, input_data, output_data):
+"""
+Function to extract data from songs data from input_data and creates the song and artist files in parquet format in the output_data folder.
+
+Parameters: 
+    spark: The Spark Session
+    input_data: S3 Bucket path to the root folder which contains the song data in the JSON format
+    output_data: S3 Bucket path to the folder in which the songs and artists table will be loaded.
+    
+    Returns: 
+    None
+
+"""
     # get filepath to song data file
     song_data = "s3a://udacity-dend/song_data/*/*/*/*.json"
     
@@ -46,10 +56,19 @@ def process_song_data(spark, input_data, output_data):
     # write artists table to parquet files
     artists_table.write.mode("overwrite").parquet("s3a://datalake/artists/")
 
+def process_log_data(spark, input_data, output_data):
 """
 Function to read log_data from S3 and process it and also write back them in parquet format.
+
+Parameters: 
+    spark: The Spark Session
+    input_data: S3 Bucket path to the root folder which contains the song data in the JSON format
+    output_data: S3 Bucket path to the folder in which the songs and artists table will be loaded.
+    
+    Returns: 
+    None
+	
 """
-def process_log_data(spark, input_data, output_data):
     # get filepath to log data file
     log_data = "s3a://udacity-dend/log_data/*/*/*.json"
 
